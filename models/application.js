@@ -9,12 +9,12 @@ module.exports = {
         return applications.findAll();
     },
     save: function (payload) {
-        throw('Not Yet Implemented');
+        return applications.save(payload);
     },
     update: function (payload) {
         throw('Not yet Implemented');
     },
     remove: function (applicationId) {
-        throw('Not Yet Implemented');
+        return applications.remove(applicationId);
     }
 };
