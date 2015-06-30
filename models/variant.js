@@ -1,12 +1,14 @@
+var variants = require('../lib/variants');
+
 module.exports = {
-    find: function (variantId) {
-        throw ('Not Yet Implemented');
+    find: function (applicationId, variantId) {
+        return variants.find(applicationId, variantId);
     },
     findAll: function (applicationId) {
-        throw('Not Yet Implemented');
+        return variants.findAll(applicationId);
     },
-    save: function (applicationId, type, payload) {
-        throw ('Not Yet Implemented');
+    save: function (applicationId, payload) {
+        return variants.save(applicationId, payload);
     },
     update: function (variantId, payload) {
         throw('Not yet Impletented');
