@@ -2,7 +2,7 @@ var mongo = require('mongodb').MongoClient;
 
 var M = function (options) {
     // Connection URL
-    var url = 'mongodb://localhost:27017/unifiedpush',
+    var url = 'mongodb://192.168.59.103:27017/unifiedpush',
         mongoDB;
 
     this.connect = function () {
