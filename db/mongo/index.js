@@ -1,34 +1,118 @@
-var mongo = require('mongodb').MongoClient;
+'use strict';
 
-var M = function (options) {
-    // Connection URL
-    var url = 'mongodb://localhost:27017/unifiedpush',
-        mongoDB;
+const mongo = require('mongodb').MongoClient;
+const uuid = require('node-uuid');
 
-    this.connect = function () {
-        // Use connect method to connect to the Server
-        mongo.connect(url, function(err, db) {
-            mongoDB = db;
+const url = 'mongodb://localhost:27017/unifiedpush';
 
-            console.log('connected to mongo');
+function findApplication (pushAppId) {
+    return new Promise((resolve, reject) => {
+        const db = this.app.db;
+        const pushApplication = db.collection('pushApplications');
+
+        const query = {};
+
+        if (pushAppId) {
+            query.pushApplicationID = pushAppId;
+        }
+
+        pushApplication.find(query).toArray((err, docs) => {
+            if (err) {
+                return reject(err);
+            }
+
+            return resolve(docs);
+
         });
-    };
+    });
+}
 
-    this.getDb = function () {
-        console.log('getting db', mongoDB);
-        return mongoDB;
-    };
+function createApplication (app) {
+    return new Promise((resolve, reject) => {
+        const db = this.app.db;
+        const pushApplication = db.collection('pushApplications');
 
-    this.collection = function () {
-        return mongoDB.collection('unifiedpush');
-    };
+        pushApplication.insert(app, (err, result) => {
+            console.log(err, result);
+            if (err) {
+                return reject(err);
+            }
 
-    this.disconnect = function () {
-        mongoDB.close();
-    };
+            return resolve(result.ops[0]);
+        });
+    });
+}
 
-    return this;
+function updateApplication (updatedPushApp) {
+    return new Promise((resolve, reject) => {
+        const db = this.app.db;
+        const pushApplication = db.collection('pushApplications');
+
+         pushApplication.update({pushApplicationID: updatedPushApp.pushApplicationID}, updatedPushApp,  (err, doc) => {
+            if (err) {
+                return reject(err);
+            }
+
+            return resolve(doc);
+        });
+    });
+}
+
+function removeApplication (pushAppId) {
+    return new Promise((resolve, reject) => {
+        const db = this.app.db;
+        const pushApplication = db.collection('pushApplications');
+
+        pushApplication.remove({
+            pushApplicationID: pushAppId
+        }, (err, doc) => {
+            if (err) {
+                return reject(err);
+            }
+
+            resolve(doc);
+        });
+    });
+}
+
+function resetApplication (pushAppId) {
+    return new Promise((resolve, reject) => {
+        const db = this.app.db;
+        const pushApplication = db.collection('pushApplications');
+
+        const query = {
+            $set: {
+                masterSecret: uuid.v4()
+            }
+        };
+
+        pushApplication.update({pushApplicationID: pushAppId}, query,  (err, doc) => {
+            if (err) {
+                return reject(err);
+            }
+
+            return resolve(doc);
+        });
+    });
+}
+
+exports.register = (server, options, next) => {
+    server.method('database.applications.find', findApplication, {bind: server, callback: false});
+    server.method('database.applications.create', createApplication, {bind: server, callback: false});
+    server.method('database.applications.update', updateApplication, {bind: server, callback: false});
+    server.method('database.applications.remove', removeApplication, {bind: server, callback: false});
+    server.method('database.applications.reset',  resetApplication, {bind: server, callback: false});
+
+    mongo.connect(url, (err, db) => {
+        if (err) {
+            next(err);
+        }
+
+        server.app.db = db;
+        next();
+    });
 };
 
-module.exports = new M();
-
+exports.register.attributes = {
+    name: 'mongodb-unifiedpush'
+};
