@@ -5,9 +5,6 @@ const Joi = require('joi');
 const uuid = require('node-uuid');
 
 exports.register = (server, options, next) => {
-    const db = server.app.db;
-    const pushApplication = db.collection('pushApplications');
-
     server.route({
         method: 'GET',
         path: '/rest/applications',
