@@ -2,6 +2,7 @@
 
 const mongo = require('mongodb').MongoClient;
 const uuid = require('node-uuid');
+const Boom = require('boom');
 
 const url = 'mongodb://localhost:27017/unifiedpush';
 
@@ -96,6 +97,33 @@ function resetApplication (pushAppId) {
     });
 }
 
+function findVariants(pushAppId) {
+    return new Promise((resolve, reject) => {
+        return this.methods.database.applications.find(pushAppId).then((pushApplicaitons) => {
+            if (pushApplicaitons.length === 0) {
+                return reject(Boom.notFound());
+            }
+
+            return resolve(pushApplicaitons[0].variants || []);
+        });
+    });
+}
+
+function createVariants (pushAppId, payload) {
+    /* jshint validthis: true */
+    const applications = this.methods.database.applications;
+     return applications.find(pushAppId).then((pushApplicaitons) => {
+        if (pushApplicaitons.length === 0) {
+            return Promise.reject(Boom.notFound());
+        }
+
+        const pushApplicaiton = pushApplicaitons[0];
+
+        pushApplicaiton.variants.push(payload);
+        return applications.update(pushApplicaiton);
+    });
+}
+
 exports.register = (server, options, next) => {
     server.method('database.applications.find', findApplication, {bind: server, callback: false});
     server.method('database.applications.create', createApplication, {bind: server, callback: false});
@@ -103,6 +131,8 @@ exports.register = (server, options, next) => {
     server.method('database.applications.remove', removeApplication, {bind: server, callback: false});
     server.method('database.applications.reset',  resetApplication, {bind: server, callback: false});
 
+    server.method('database.variants.find', findVariants, {bind: server, callback: false});
+    server.method('database.variants.create', createVariants, {bind: server, callback: false});
     mongo.connect(url, (err, db) => {
         if (err) {
             next(err);

@@ -11,7 +11,8 @@ server.connection({
 
 server.register([
     require('./db/mongo'),
-    require('./api/v1/applications')
+    require('./api/v1/applications'),
+    require('./api/v1/variants/android')
 ], (err) => {
     if (err) {
         throw err;
