@@ -109,6 +109,56 @@ function findVariants(pushAppId) {
     });
 }
 
+function findVariantByVariantId(variantId) {
+    return new Promise((resolve, reject) => {
+        const db = this.app.db;
+        const pushApplication = db.collection('pushApplications');
+
+        const query = {
+            'variants.variantID': variantId
+        };
+
+        pushApplication.find(query).toArray((err, docs) => {
+            if (err) {
+                return reject(err);
+            }
+
+            return resolve(docs);
+
+        });
+    });
+}
+
+function createInstallation (installation) {
+    return new Promise((resolve, reject) => {
+        const db = this.app.db;
+        const installations = db.collection('installations');
+
+        installations.insert(installation, (err, result) => {
+            if (err) {
+                return reject(err);
+            }
+
+            return resolve(result.ops[0]);
+        });
+    });
+}
+
+function findInstallations (variantId) {
+    return new Promise((resolve, reject) => {
+        const db = this.app.db;
+        const installations = db.collection('installations');
+
+        installations.find({variantID: variantId}).toArray((err, installs) => {
+            if (err) {
+                return reject(err);
+            }
+
+            return resolve(installs);
+        });
+    });
+}
+
 function createVariants (pushAppId, payload) {
     /* jshint validthis: true */
     const applications = this.methods.database.applications;
@@ -132,7 +182,12 @@ exports.register = (server, options, next) => {
     server.method('database.applications.reset',  resetApplication, {bind: server, callback: false});
 
     server.method('database.variants.find', findVariants, {bind: server, callback: false});
+    server.method('database.variants.findById', findVariantByVariantId, {bind: server, callback: false});
     server.method('database.variants.create', createVariants, {bind: server, callback: false});
+
+
+    server.method('database.installations.create', createInstallation, {bind: server, callback: false});
+    server.method('database.installations.find', findInstallations, {bind: server, callback: false});
     mongo.connect(url, (err, db) => {
         if (err) {
             next(err);
