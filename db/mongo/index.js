@@ -6,7 +6,18 @@ const application = require('./lib/application');
 const variant = require('./lib/variant');
 const installation = require('./lib/installation');
 
-const url = 'mongodb://localhost:27017/unifiedpush';
+const mongoDefaults = {
+    'type': 'mongo',
+    'host': 'localhost',
+    'port': '27017',
+    'dbName': 'unifiedpush'
+};
+
+const mongoConfig = require('../../config.json');
+console.log(mongoConfig);
+const mergedConfig = Object.assign({}, mongoDefaults, mongoConfig.db);
+
+const url = `mongodb://${mergedConfig.host}:${mergedConfig.port}/${mergedConfig.dbName}`;
 
 exports.register = (server, options, next) => {
     server.method('database.applications.find', application.find, {bind: server, callback: false});
@@ -27,6 +38,8 @@ exports.register = (server, options, next) => {
         if (err) {
             next(err);
         }
+
+        console.log(`connected to MongoDB: ${url}`);
 
         server.app.db = db;
         next();
