@@ -1,8 +1,6 @@
 'use strict';
 
 const mongo = require('mongodb').MongoClient;
-const uuid = require('node-uuid');
-const Boom = require('boom');
 
 const application = require('./lib/application');
 const variant = require('./lib/variant');
