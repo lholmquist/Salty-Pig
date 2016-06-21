@@ -1,7 +1,6 @@
 'use strict';
 
 const Hapi = require('hapi');
-const mongodb = require('mongodb').MongoClient;
 const Basic = require('hapi-auth-basic');
 
 const server = new Hapi.Server();
