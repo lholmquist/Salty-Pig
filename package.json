@@ -13,5 +13,8 @@
     "mongodb": "^2.1.18",
     "node-gcm": "^0.14.3",
     "node-uuid": "^1.4.7"
+  },
+  "devDependencies": {
+    "tape": "^4.6.0"
   }
 }
