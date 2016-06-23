@@ -2,7 +2,14 @@
   "name": "unifiedpush-node",
   "version": "0.0.0",
   "main": "server.js",
-  "scripts": {},
+  "scripts": {
+    "test": "tape test/**/*-test.js",
+    "lint": "jshint index.js lib/*.js test/**/*.js",
+    "prepublish": "./node_modules/nsp/bin/nsp check",
+    "coverage": "./node_modules/.bin/istanbul cover tape -- test/**/*.js",
+    "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls",
+    "docs": "./node_modules/.bin/jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./lib/*.js"
+  },
   "dependencies": {
     "bcrypt": "^0.8.7",
     "boom": "^3.2.1",
@@ -15,6 +22,11 @@
     "node-uuid": "^1.4.7"
   },
   "devDependencies": {
+    "coveralls": "^2.11.9",
+    "istanbul": "^0.4.4",
+    "jshint": "^2.9.2",
+    "nsp": "^2.4.0",
+    "proxyquire": "^1.7.9",
     "tape": "^4.6.0"
   }
 }
