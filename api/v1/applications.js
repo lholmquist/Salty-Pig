@@ -46,8 +46,8 @@ exports.register = (server, options, next) => {
                 variants: []
             };
 
-            server.methods.database.applications.create(app, server).then((result) => {
-                return reply(result);
+            server.methods.database.applications.create(app).then((result) => {
+                return reply(result).code(201);
             }).catch((err) => {
                 return reply(Boom.badData('Internal MongoDB error', err));
             });
