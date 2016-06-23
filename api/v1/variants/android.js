@@ -27,7 +27,7 @@ exports.register = (server, options, next) => {
 
     server.route({
         method: 'GET',
-        path: '/rest/applications/{pushAppId}/android{variantId}',
+        path: '/rest/applications/{pushAppId}/android/{variantId}',
         handler: (request, reply) => {
             server.methods.database.variants.find(request.params.pushAppId, request.params.variantId).then((variant) => {
                 if (variant.length === 0) {
