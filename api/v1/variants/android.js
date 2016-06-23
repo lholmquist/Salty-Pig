@@ -56,7 +56,7 @@ exports.register = (server, options, next) => {
             payload.secret = uuid.v4();
 
             server.methods.database.variants.create(request.params.pushAppId, payload).then((variant) => {
-                return reply(variant);
+                return reply(variant).code(201);
             }).catch((err) => {
                 if (err.isBoom) {
                     return reply(err);
