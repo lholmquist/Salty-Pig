@@ -141,6 +141,9 @@ exports.register = (server, options, next) => {
                     return reply(Boom.notFound());
                 }
 
+                // The Aerogear API says that this should return a 204,  but it is actually returning something
+                // Looks like Hapi won't return any data if the code(204) is set
+                // keeping as 200 for now
                 return reply(docs[0]);
             }).catch((err) => {
                 return reply(Boom.badData('Internal MongoDB error', err));
