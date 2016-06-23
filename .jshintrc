@@ -16,5 +16,6 @@
   "indent": 4,
   "white": true,
   "quotmark": "single",
-  "laxbreak": true
+  "laxbreak": true,
+  "validthis": true
 }

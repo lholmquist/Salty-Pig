@@ -3,6 +3,13 @@
 const gcm = require('node-gcm');
 const _ = require('lodash');
 
+function send (googleKey, gcmMessage, tokens) {
+    const sender = new gcm.Sender(googleKey);
+    sender.send(gcmMessage, {registrationTokens: tokens}, (err, response) => {
+        console.log(err, response);
+    });
+}
+
 module.exports = (installs, message) => {
      const gcmMessage = new gcm.Message(message);
 
@@ -17,9 +24,6 @@ module.exports = (installs, message) => {
             regTokens.push(installations[i].deviceToken);
         }
 
-        const sender = new gcm.Sender(installations[0].variant.googleKey);
-        sender.send(gcmMessage, {registrationTokens: regTokens}, (err, response) => {
-            console.log(err, response);
-        });
+        send(installations[0].variant.googleKey, gcmMessage, regTokens);
      }
 };

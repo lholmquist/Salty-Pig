@@ -36,7 +36,6 @@ function findVariantByVariantId(variantId) {
 }
 
 function createVariants (pushAppId, payload) {
-    /* jshint validthis: true */
     const applications = this.methods.database.applications;
      return applications.find(pushAppId).then((pushApplicaitons) => {
         if (pushApplicaitons.length === 0) {

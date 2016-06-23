@@ -4,7 +4,7 @@
   "main": "server.js",
   "scripts": {
     "test": "tape test/**/*-test.js",
-    "lint": "jshint index.js lib/*.js test/**/*.js",
+    "lint": "jshint server.js db/**/*.js api/**/*.js auth/*.js services/*.js test/**/**/*.js",
     "prepublish": "./node_modules/nsp/bin/nsp check",
     "coverage": "./node_modules/.bin/istanbul cover tape -- test/**/*.js",
     "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls",
