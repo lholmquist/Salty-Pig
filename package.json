@@ -11,7 +11,6 @@
     "docs": "./node_modules/.bin/jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./lib/*.js"
   },
   "dependencies": {
-    "bcrypt": "^0.8.7",
     "boom": "^3.2.1",
     "hapi": "^13.4.1",
     "hapi-auth-basic": "^4.2.0",
