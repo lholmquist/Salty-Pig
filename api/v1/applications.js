@@ -80,9 +80,8 @@ exports.register = (server, options, next) => {
                 // Not really a fan of these if's
                 // according to the endpoint docs,  i think all the params need to be here, so this could change
                 // api reference https://aerogear.org/docs/specs/aerogear-unifiedpush-rest/index.html#-1174679174
-                if (request.payload.name) {
-                    query.name = request.payload.name;
-                }
+                // Name doesn't need the IF since it is required in the config.validate
+                query.name = request.payload.name;
 
                 if (request.payload.description) {
                     query.description = request.payload.description;
@@ -104,7 +103,7 @@ exports.register = (server, options, next) => {
         config: {
             validate: {
                 payload: Joi.object({
-                    name: Joi.string().min(1).max(255).optional(),
+                    name: Joi.string().min(1).max(255).required(),
                     description: Joi.string().min(1).max(255).optional(),
                 })
             }
