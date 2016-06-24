@@ -34,7 +34,6 @@ exports.register = (server, options, next) => {
                 return variant;
             }).then((variant) => {
                 const defaultInstallation = {
-                    _id: uuid.v1(),
                     variantID: variant.variantID
                 };
 
@@ -48,7 +47,21 @@ exports.register = (server, options, next) => {
 
                 const installation = Object.assign({}, defaultInstallation, payload);
 
-                return server.methods.database.installations.create(installation).then((result) => {
+                //We should probably check that to see if this device token has already been registered
+
+                return server.methods.database.installations.findByToken(installation.deviceToken).then((installations) => {
+                    if (installations.length === 0) {
+                        // Do create method
+                        installation._id = uuid.v1();
+                        return server.methods.database.installations.create(installation);
+                    }
+
+                    // Update instead
+                   const installToUpdate = installations[0];
+                   const toUpdate = Object.assign({}, installToUpdate, installation);
+
+                   return server.methods.database.installations.update(toUpdate);
+                }).then((result) => {
                     return reply(result);
                 });
             }).catch((err) => {

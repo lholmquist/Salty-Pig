@@ -32,7 +32,9 @@ exports.register = (server, options, next) => {
 
 
     server.method('database.installations.create', installation.create, {bind: server, callback: false});
+    server.method('database.installations.update', installation.update, {bind: server, callback: false});
     server.method('database.installations.find', installation.find, {bind: server, callback: false});
+    server.method('database.installations.findByToken', installation.findByToken, {bind: server, callback: false});
 
     mongo.connect(url, (err, db) => {
         if (err) {
