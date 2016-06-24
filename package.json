@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "tape test/**/*-test.js",
     "lint": "jshint server.js db/**/*.js api/**/*.js auth/*.js services/*.js test/**/**/*.js",
     "prepublish": "./node_modules/nsp/bin/nsp check",
