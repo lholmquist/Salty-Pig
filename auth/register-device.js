@@ -9,7 +9,8 @@ function validate (request, username, password, callback) {
     // look up the variant by the Id(which will be the username)
     this.server.methods.database.variants.findById(username).then((docs) => {
         if (docs.length === 0) {
-            return callback(null, false);
+            callback(null, false);
+            return;
         }
 
         const variant = docs[0].variants.filter((v) => {
@@ -18,14 +19,15 @@ function validate (request, username, password, callback) {
 
         // validate this variant comparing the password and variant secret
         if (password !== variant.secret) {
-            return callback(null, false);
+            callback(null, false);
+            return;
         }
 
         callback(null, true, {id: variant.variantID});
 
 
     }).catch((err) => {
-        return callback(err, false);
+        callback(err, false);
     });
 }
 
