@@ -4,6 +4,7 @@ const Boom = require('boom');
 const _ = require('lodash');
 
 const gcm = require('../../services/gcm');
+const apns = require('../../services/apns');
 
 function getInstallations (server, variants) {
     const p = variants.map((v) => {
@@ -45,6 +46,9 @@ exports.register = (server, options, next) => {
                         switch (obj) {
                         case 'ANDROID':
                             gcm(grouped[obj], message);
+                            break;
+                        case 'IOS':
+                            apns(grouped[obj], message);
                             break;
                         default:
                             break;

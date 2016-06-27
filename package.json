@@ -12,6 +12,7 @@
     "docs": "./node_modules/.bin/jsdoc --verbose -d docs -t ./node_modules/ink-docstrap/template -R README.md index.js ./lib/*.js"
   },
   "dependencies": {
+    "apn": "^1.7.6",
     "boom": "^3.2.1",
     "hapi": "^13.4.1",
     "hapi-auth-basic": "^4.2.0",
@@ -19,7 +20,8 @@
     "lodash": "^4.13.1",
     "mongodb": "^2.1.18",
     "node-gcm": "^0.14.3",
-    "node-uuid": "^1.4.7"
+    "node-uuid": "^1.4.7",
+    "stream-to-array": "^2.3.0"
   },
   "devDependencies": {
     "coveralls": "^2.11.9",

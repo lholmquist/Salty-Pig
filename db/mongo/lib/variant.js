@@ -2,6 +2,7 @@
 
 const uuid = require('node-uuid');
 const Boom = require('boom');
+const Binary = require('mongodb').Binary;
 
 function findVariants(pushAppId) {
     return new Promise((resolve, reject) => {
@@ -43,8 +44,12 @@ function createVariants (pushAppId, payload) {
         }
 
         const pushApplicaiton = pushApplicaitons[0];
-
-        pushApplicaiton.variants.push(payload);
+        if (payload.type !== 'IOS') {
+            pushApplicaiton.variants.push(payload);
+        } else {
+            payload.certificate = new Binary(payload.certificate);
+            pushApplicaiton.variants.push(payload);
+        }
         return applications.update(pushApplicaiton);
     });
 }
