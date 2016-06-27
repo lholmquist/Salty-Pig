@@ -13,6 +13,10 @@ exports.register = (server, options, next) => {
             server.methods.database.variants.find(request.params.pushAppId).then((variants) => {
                 const iosVariants = variants.filter((v) => {
                     return v.type === 'IOS';
+                }).map((v) => {
+                    delete v.certificate;
+                    delete v.passphrase;
+                    return v;
                 });
 
                 reply(iosVariants);
@@ -35,6 +39,9 @@ exports.register = (server, options, next) => {
                     return reply(Boom.notFound());
                 }
 
+                delete variant[0].certificate;
+                delete variant[0].passphrase;
+
                 return reply(variant[0]);
             }).catch((err) => {
                 if (err.isBoom) {
@@ -55,8 +62,11 @@ exports.register = (server, options, next) => {
             payload._id = uuid.v1();
             payload.variantID = uuid.v4();
             payload.secret = uuid.v4();
+            payload.production = payload.production ? true : false;
 
-            console.log(request.payload.certificate);
+            // Need to validate the cert and passphrase?
+
+            // Take the incoming cert and put it into a buffer
             toArray(request.payload.certificate).then((parts) => {
                 const buffers = [];
                 for (let i = 0, l = parts.length; i < l ; ++i) {
@@ -67,6 +77,9 @@ exports.register = (server, options, next) => {
             }).then((certBuffer) => {
                 payload.certificate = certBuffer;
                 return server.methods.database.variants.create(request.params.pushAppId, payload).then((variant) => {
+                    delete payload.certificate;
+                    delete payload.passphrase;
+
                     return reply(payload).code(201);
                 });
             }).catch((err) => {
@@ -82,15 +95,17 @@ exports.register = (server, options, next) => {
                 output: 'stream',
                 parse: true,
                 allow: 'multipart/form-data'
+            },
+            validate: {
+                payload: {
+                    name: Joi.string().min(1).max(255).required(),
+                    type: Joi.string().valid('IOS').required(),
+                    description: Joi.string().min(1).max(255).optional(),
+                    passphrase: Joi.string().min(1).max(255).required(),
+                    production: Joi.boolean().optional(),
+                    certificate: Joi.object().required()
+                }
             }
-            // validate: {
-            //     payload: {
-            //         name: Joi.string().min(1).max(255).required(),
-            //         type: Joi.string().valid('IOS').required(),
-            //         passphrase: Joi.string().min(1).max(255).required(),
-            //         description: Joi.string().min(1).max(255).optional()
-            //     }
-            // }
         }
     });
 
