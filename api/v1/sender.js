@@ -2,6 +2,7 @@
 
 const Boom = require('boom');
 const _ = require('lodash');
+const Joi = require('joi');
 
 const gcm = require('../../services/gcm');
 const apns = require('../../services/apns');
@@ -26,6 +27,9 @@ exports.register = (server, options, next) => {
         method: 'POST',
         path: '/rest/sender',
         handler: (request, reply) => {
+            const message = request.payload.message || {};
+            const criteria = request.payload.criteria || {};
+            const config = request.payload.config || {};
             // Find the Application
             // Pass them off to the sender
             // Filtering should happen at some point
@@ -35,8 +39,23 @@ exports.register = (server, options, next) => {
                     return reply(Boom.notFound());
                 }
 
+                // Check the message to see if we need to filter by variant)
+                // If So, filter and then get just those installations
+                let variants = docs[0].variants;
+                if (criteria.variants) {
+                    variants = variants.filter((v) => {
+                        if (!Array.isArray(criteria.variants)) {
+                            return v.variantID === criteria.variants;
+                        }
+
+                        for (let i = 0; i < criteria.variants; i++) {
+                            return criteria.variants[i] === v.variantID;
+                        }
+                    });
+                }
+
                 // Then loop through the variants
-                return getInstallations(server, docs[0].variants).then((installs) => {
+                return getInstallations(server, variants).then((installs) => {
                     // Filter results?
 
                     const message = {data: {key1: 'msg1'}};
@@ -62,7 +81,14 @@ exports.register = (server, options, next) => {
             });
         },
         config: {
-            auth: 'auth-sender'
+            auth: 'auth-sender',
+            validate: {
+                payload: {
+                    message: Joi.object().optional(),
+                    criteria: Joi.object().optional(),
+                    config: Joi.object().optional()
+                }
+            }
         }
     });
 
