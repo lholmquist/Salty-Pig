@@ -22,6 +22,7 @@ server.register([Basic,
     require('./api/v1/applications'),
     require('./api/v1/variants/android'),
     require('./api/v1/variants/ios'),
+    require('./api/v1/installations'),
     require('./api/v1/sender')
 ], (err) => {
     if (err) {
