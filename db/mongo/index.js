@@ -17,7 +17,7 @@ const mongoConfig = require('../../config.json');
 console.log(mongoConfig);
 const mergedConfig = Object.assign({}, mongoDefaults, mongoConfig.db);
 
-const url = `mongodb://${mergedConfig.host}:${mergedConfig.port}/${mergedConfig.dbName}`;
+const url = process.env.MONGO_URL || `mongodb://${mergedConfig.host}:${mergedConfig.port}/${mergedConfig.dbName}`;
 
 exports.register = (server, options, next) => {
     server.method('database.applications.find', application.find, {bind: server, callback: false});

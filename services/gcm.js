@@ -24,6 +24,6 @@ module.exports = (installs, message) => {
             regTokens.push(installations[i].deviceToken);
         }
 
-        send(installations[0].variant.googleKey, gcmMessage, regTokens);
+        send('AIzaSyDCORP3s2f0VED8ygCInCFCQQ4D7dZPW1o', gcmMessage, regTokens);
      }
 };

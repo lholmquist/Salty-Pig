@@ -6,7 +6,7 @@ const Basic = require('hapi-auth-basic');
 const server = new Hapi.Server();
 
 server.connection({
-    port: process.env.PORT || 3000,
+    port: process.env.PORT || 8080,
     routes: {
         cors: {
             'headers': ['Accept', 'Authorization', 'Content-Type', 'If-None-Match', 'Accept-language']
